@@ -4,11 +4,6 @@
 #include <vector>
 #include <iostream>
 #include <string>
-// #include <cmath>
-// #include <iomanip>
-// #include <cstdlib>
-// #include <algorithm>
-// #include <exception>
 
 class longNumber {
     std::vector<unsigned long long> lnum;
@@ -38,6 +33,11 @@ private:
     void deleteLeadingZeros();
     friend longNumber mult_column(const longNumber &first, const longNumber &second);
     friend longNumber mult_small(const longNumber &first, const longNumber &second);
+    /* karatsuba
+    void mult_pow_base(size_t e);
+    friend longNumber mult_karatsuba(longNumber &first, longNumber &second);
+    void insertLeadingZeros(size_t cnt);
+    */
     void shift_right();
     friend longNumber div(const longNumber &first, const longNumber &second);
 };

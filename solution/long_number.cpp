@@ -123,6 +123,19 @@ longNumber operator*(const longNumber &first, const longNumber &second) {
     } else if (first.lnum.size() == 1) {
         return mult_small(second, first);
     }
+    /* karatsuba
+    longNumber a{first}, b{second};
+    if (first.lnum.size() > second.lnum.size()) {
+        size_t diff = first.lnum.size() - second.lnum.size();
+        a.insertLeadingZeros(diff);
+    } else if (first.lnum.size() < second.lnum.size()) {
+        size_t diff = second.lnum.size() - first.lnum.size();
+        b.insertLeadingZeros(diff);
+    }
+    longNumber res = mult_karatsuba(a, b);
+    res.deleteLeadingZeros();
+    return res;
+    */
     longNumber res = mult_column(first, second);
     res.deleteLeadingZeros();
     return res;
@@ -208,6 +221,71 @@ longNumber mult_small(const longNumber &first, const longNumber &second) {
     res.deleteLeadingZeros();
     return res;
 }
+
+/* karatsuba
+void longNumber::mult_pow_base(size_t e) {
+    std::vector<unsigned long long> toIns;
+    for (size_t i = 0; i < e; i++) {
+        toIns.push_back(0);
+    }
+    this->lnum.insert(this->lnum.begin(), toIns.begin(), toIns.end());
+    this->deleteLeadingZeros();
+}
+
+longNumber mult_karatsuba(longNumber &first, longNumber &second) {
+    longNumber zero{"0"};
+    if (first == zero || second == zero) {
+        return zero;
+    }
+    if (second.lnum.size() == 1) {
+        return mult_small(first, second);
+    } else if (first.lnum.size() == 1) {
+        return mult_small(second, first);
+    }
+
+    if (first.lnum.size() > second.lnum.size()) {
+        size_t diff = first.lnum.size() - second.lnum.size();
+        second.insertLeadingZeros(diff);
+    } else if (first.lnum.size() < second.lnum.size()) {
+        size_t diff = second.lnum.size() - first.lnum.size();
+        first.insertLeadingZeros(diff);
+    }
+
+    longNumber aZero, aOne, bZero, bOne;
+    aZero.lnum.resize(first.lnum.size() / 2);
+    bZero.lnum.resize(first.lnum.size() / 2);
+    aOne.lnum.resize(first.lnum.size() - first.lnum.size() / 2);
+    bOne.lnum.resize(first.lnum.size() - first.lnum.size() / 2);
+
+    for (size_t i = 0; i <= first.lnum.size() / 2 - 1; i++) {
+        aZero.lnum[i] = first.lnum[i];
+        bZero.lnum[i] = second.lnum[i];
+    }
+    for (size_t i = first.lnum.size() / 2; i < first.lnum.size(); i++) {
+        aOne.lnum[i - first.lnum.size() / 2] = first.lnum[i];
+        bOne.lnum[i - first.lnum.size() / 2] = second.lnum[i];
+    }
+
+    longNumber firstRes = mult_karatsuba(aZero, bZero);
+    longNumber secondRes = mult_karatsuba(aOne, bOne);
+    longNumber sumA = aZero + aOne;
+    longNumber sumB = bZero + bOne;
+    longNumber thirdRes = mult_karatsuba(sumA, sumB) - firstRes - secondRes;
+    thirdRes.mult_pow_base(first.lnum.size() / 2);
+    secondRes.mult_pow_base(first.lnum.size() / 2 * 2);
+    
+    first.deleteLeadingZeros();
+    second.deleteLeadingZeros();
+
+    return (firstRes + secondRes + thirdRes);
+}
+
+void longNumber::insertLeadingZeros(size_t cnt) {
+    for (size_t i = cnt; i > 0; i--) {
+        this->lnum.push_back(0);
+    }
+}
+*/
 
 void longNumber::shift_right() {
     if (this->lnum.size() == 0) {
